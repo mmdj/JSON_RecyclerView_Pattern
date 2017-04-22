@@ -56,7 +56,7 @@
 
     <TextView
         android:id="@+id/txtVw_title"
-        android:layout_width="152dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:text="Title"
 
@@ -69,6 +69,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toRightOf="@+id/imageButton"
         android:layout_marginLeft="32dp"
-        app:layout_constraintHorizontal_bias="1.0"/>
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintVertical_bias="0.49"/>
 
 </android.support.constraint.ConstraintLayout>

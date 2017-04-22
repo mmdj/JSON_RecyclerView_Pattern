@@ -8,17 +8,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.mdolzhanskyj.json_recyclerview.adapters.RecyclerAdapter;
+import com.mdolzhanskyj.json_recyclerview.adapters.AlbumRecyclerAdapter;
 import com.mdolzhanskyj.json_recyclerview.model.Album;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeSet;
 
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Album> mAlbums;
+    ArrayList<Album> mImages;
+    TreeSet<Integer> mAlbumsId;
     Gson gson;
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
@@ -30,16 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* getting json from file: */
-        String jsonStr = getJsonFromFile();     //TODO String jsonStr = getJsonFromHTTP()
-
-
-        /* convert json from String to objects in ArrayList<Album>: */
-        if (jsonStr != null) {
-            Album[] albums = gson.fromJson(jsonStr, Album[].class);
-            mAlbums = new ArrayList<>(Arrays.asList(albums));
-            Log.i("TAG", "Album " + albums[0].toString());
-        }
+        //get Data From Json and fill albums and images model
+        getDataFromJson();
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_albums);
@@ -52,10 +46,16 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // making adapter
-        mAdapter = new RecyclerAdapter(mAlbums);
+        //if we want to make adapter for images
+        // mAdapter = new ImageRecyclerAdapter(mImages);
+
+        //if we want to make adapter for albums
+        mAdapter = new AlbumRecyclerAdapter(mAlbumsId);
+
+
         mRecyclerView.setAdapter(mAdapter);
 
+        //making divider
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 mLayoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -65,6 +65,42 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
+
+
+    /**
+     * getJsonFromFile() <br>
+     * and make ArrayList with objects <br>
+     * and make TreeSet with albums numbers
+     */
+    private void getDataFromJson() {
+
+         /* getting json from file: */
+        String jsonStr = getJsonFromFile();     //TODO String jsonStr = getJsonFromHTTP()
+
+         /* convert json from String to objects in ArrayList<Album>: */
+        if (jsonStr != null) {
+            //convert json to objects array
+            Album[] albums = gson.fromJson(jsonStr, Album[].class);
+
+            //all objects are going to ArrayList<Album>:
+            mImages = new ArrayList<>(Arrays.asList(albums));
+
+            //all albumsId are going to TreeSet(sorted and without doubles):
+            mAlbumsId = new TreeSet<>();
+            for (Album album : albums) {
+                mAlbumsId.add(album.getAlbumId());
+            }
+        }
+    }
+
+
+
+    /**
+     * getAsset from file
+     * @return String with json
+     */
     private String getJsonFromFile() {
 
         String res = null;
